@@ -5,31 +5,25 @@ import com.padmeamd.reservation_system.ReservationStatus;
 import com.padmeamd.reservation_system.entity.Reservation;
 import com.padmeamd.reservation_system.entity.ReservationEntity;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.padmeamd.reservation_system.repository.ReservationRepository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
-private static final Logger LOGGER = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository repository;
 
-    public ReservationService(ReservationRepository repository) {
-        this.repository = repository;
-    }
-
     public Reservation getReservationById(Long id) {
-        ReservationEntity reservationEntity = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Sorry! Reservation with id " + id + " does not exist."));
+        ReservationEntity reservationEntity = repository
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Sorry! Reservation with id " + id + " does not exist."));
         return toDomainReservation(reservationEntity);
     }
 
@@ -83,7 +77,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ReservationService.
             throw new EntityNotFoundException("Sorry! Reservation with id " + id + " does not exist.");
         }
         repository.setStatus(id, ReservationStatus.CANCELLED);
-        LOGGER.info("SUCCESS: Reservation with id " + id + " has been cancelled.");
+        log.info("SUCCESS: Reservation with id " + id + " has been cancelled.");
     }
 
     public Reservation approveReservation(Long id) {

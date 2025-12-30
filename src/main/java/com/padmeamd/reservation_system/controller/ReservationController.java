@@ -2,23 +2,18 @@ package com.padmeamd.reservation_system.controller;
 
 import com.padmeamd.reservation_system.entity.Reservation;
 import com.padmeamd.reservation_system.service.ReservationService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
-
-    private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
 
     private final ReservationService reservationService;
 
