@@ -5,8 +5,12 @@ import com.padmeamd.reservation_system.ReservationStatus;
 import com.padmeamd.reservation_system.entity.Reservation;
 import com.padmeamd.reservation_system.entity.ReservationEntity;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.padmeamd.reservation_system.repository.ReservationRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class ReservationService {
+private static final Logger LOGGER = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository repository;
 
@@ -72,11 +77,13 @@ public class ReservationService {
         return toDomainReservation(updatedReservation);
     }
 
-    public void deleteReservation(Long id) {
+ @Transactional
+    public void cancelReservation(Long id) {
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException("Sorry! Reservation with id " + id + " does not exist.");
         }
-        repository.deleteById(id);
+        repository.setStatus(id, ReservationStatus.CANCELLED);
+        LOGGER.info("SUCCESS: Reservation with id " + id + " has been cancelled.");
     }
 
     public Reservation approveReservation(Long id) {
