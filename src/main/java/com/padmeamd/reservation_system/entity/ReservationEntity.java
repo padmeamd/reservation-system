@@ -27,11 +27,11 @@ public class ReservationEntity {
     public ReservationEntity() {
     }
 
-    public ReservationEntity(Long id, Long userId, LocalDate startDate, Long roomId, LocalDate endDate, ReservationStatus status) {
+    public ReservationEntity(Long id, Long userId, Long roomId, LocalDate startDate, LocalDate endDate, ReservationStatus status) {
         this.id = id;
         this.userId = userId;
-        this.startDate = startDate;
         this.roomId = roomId;
+        this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
     }

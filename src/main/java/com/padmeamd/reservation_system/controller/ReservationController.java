@@ -25,47 +25,49 @@ public class ReservationController {
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id){
+    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
         log.info("Called getReservationById, id: " + id);
         //return reservationService.getReservationById(id);
         try {
             return ResponseEntity.status(HttpStatus.OK).body(reservationService.getReservationById(id));
-        }catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(404).build();
         }
     }
 
     @GetMapping()
-    public ResponseEntity<List<Reservation>> getAllReservations(){
+    public ResponseEntity<List<Reservation>> getAllReservations() {
         log.info("Called getAllReservation");
         return ResponseEntity.of(Optional.ofNullable(reservationService.findAllReservations()));
         //return reservationService.findAllReservations();
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservationToCreate){
+    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservationToCreate) {
         log.info("Called createReservation");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(reservationService.createReservation(reservationToCreate));
         //return reservationService.createReservation(reservationToCreate);
     }
-   @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservationToUpdate){
-       log.info("Called updateReservation id={}, reservationToUpdate={}", id,reservationToUpdate);
-       var updated = reservationService.updateReservation(id,reservationToUpdate);
-       return ResponseEntity.ok(updated);
-   }
-   
-   @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Long id){
-       log.info("Called deleteReservation id={}", id);
-       try{
-           reservationService.deleteReservation(id);
-           return ResponseEntity.ok().build();
-       }catch(NoSuchElementException e){
-           return ResponseEntity.status(404).build();
-       }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservationToUpdate) {
+        log.info("Called updateReservation id={}, reservationToUpdate={}", id, reservationToUpdate);
+        var updated = reservationService.updateReservation(id, reservationToUpdate);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
+        log.info("Called deleteReservation id={}", id);
+        try {
+            reservationService.deleteReservation(id);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 
     @PostMapping("/{id}/approve")
