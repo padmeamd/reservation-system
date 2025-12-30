@@ -1,4 +1,4 @@
-package com.padmeamd.reservation_system.service;
+package com.padmeamd.reservation_system.entity;
 
 import com.padmeamd.reservation_system.ReservationStatus;
 
