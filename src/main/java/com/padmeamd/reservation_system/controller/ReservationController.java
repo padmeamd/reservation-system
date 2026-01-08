@@ -2,6 +2,7 @@ package com.padmeamd.reservation_system.controller;
 
 import com.padmeamd.reservation_system.entity.Reservation;
 import com.padmeamd.reservation_system.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservationToCreate) {
+    public ResponseEntity<Reservation> createReservation(@RequestBody @Valid Reservation reservationToCreate) {
         log.info("Called createReservation");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(reservationService.createReservation(reservationToCreate));
@@ -43,7 +44,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservationToUpdate) {
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody @Valid Reservation reservationToUpdate) {
         log.info("Called updateReservation id={}, reservationToUpdate={}", id, reservationToUpdate);
         var updated = reservationService.updateReservation(id, reservationToUpdate);
         return ResponseEntity.ok(updated);

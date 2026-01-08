@@ -35,11 +35,11 @@ public class ReservationService {
     }
 
     public Reservation createReservation(Reservation reservationToCreate) {
-        if (reservationToCreate.id() != null) {
-            throw new IllegalArgumentException("Id should be empty!");
-        }
         if (reservationToCreate.status() != null) {
             throw new IllegalArgumentException("Status should be empty!");
+        }
+        if(!reservationToCreate.endDate().isAfter(reservationToCreate.startDate())) {
+            throw new IllegalArgumentException("Start date should be at least 1 day earlier than end date!");
         }
         var entityToSave = new ReservationEntity(
                 null,
@@ -59,6 +59,9 @@ public class ReservationService {
         if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
             throw new IllegalStateException("Cannot modify reservation: status - " + reservationEntity.getStatus());
         }
+        if(!reservationToUpdate.endDate().isAfter(reservationToUpdate.startDate())) {
+            throw new IllegalArgumentException("Start date should be at least 1 day earlier than end date!");
+        }
         var reservationToSave = new ReservationEntity(
                 reservationEntity.getId(),
                 reservationToUpdate.userId(),
@@ -73,9 +76,14 @@ public class ReservationService {
 
  @Transactional
     public void cancelReservation(Long id) {
-        if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Sorry! Reservation with id " + id + " does not exist.");
-        }
+        var reservation = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Sorry! Reservation with id " + id + " does not exist."));
+     if(reservation.getStatus().equals(ReservationStatus.APPROVED)) {
+         throw new IllegalStateException("You can't cancel approved reservation. Please, contact the manager.");
+     }
+     if(reservation.getStatus().equals(ReservationStatus.CANCELLED)) {
+         throw new IllegalStateException("The reservation has already been cancelled.");
+
+     }
         repository.setStatus(id, ReservationStatus.CANCELLED);
         log.info("SUCCESS: Reservation with id " + id + " has been cancelled.");
     }
