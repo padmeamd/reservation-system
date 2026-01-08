@@ -2,7 +2,9 @@ package com.padmeamd.reservation_system.repository;
 
 import com.padmeamd.reservation_system.ReservationStatus;
 import com.padmeamd.reservation_system.entity.ReservationEntity;
+import com.padmeamd.reservation_system.entity.ReservationSearchFilter;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,6 +46,22 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     @Transactional
     @Modifying
     @Query(""" 
-    update ReservationEntity r set r.status =:status where r.id =:id""")
+            update ReservationEntity r set r.status =:status where r.id =:id""")
     void setStatus(@Param("id") Long id, @Param("status") ReservationStatus reservationStatus);
+
+
+    @Query(""" 
+            SELECT r.id from ReservationEntity  r
+                    where r.roomId = :roomId
+                        and :startDate < r.roomId
+                        and r.startDate < :endDate
+                        and r.status = :status""")
+    List<Long> findConflictedReservationIds(@Param("roomId") Long roomId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param(":status") ReservationStatus status);
+
+    @Query(""" 
+            SELECT r.id from ReservationEntity  r
+                    where (:roomId IS NULL OR r.roomId = :roomId)
+                    and (:userId IS NULL OR r.userId = :userId)""")
+    List<ReservationEntity> findAllByFilter(@Param("roomId") Long roomId, @Param("userId") Long userId, Pageable pageable);
 }
+

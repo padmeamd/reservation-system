@@ -1,6 +1,7 @@
 package com.padmeamd.reservation_system.controller;
 
 import com.padmeamd.reservation_system.entity.Reservation;
+import com.padmeamd.reservation_system.entity.ReservationSearchFilter;
 import com.padmeamd.reservation_system.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,12 @@ public class ReservationController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Reservation>> getAllReservations() {
+    public ResponseEntity<List<Reservation>> getAllReservations(
+           @RequestParam(name = "roomId", required = false) Long roomId, @RequestParam(name = "userId", required = false)Long userId, @RequestParam(name = "pageSize", required = false) Integer pageSize, @RequestParam(name = "pageNumber", required = false)Integer pageNumber
+    ) {
         log.info("Called getAllReservation");
-        return ResponseEntity.of(Optional.ofNullable(reservationService.findAllReservations()));
-        //return reservationService.findAllReservations();
+        var filter = new ReservationSearchFilter(roomId, userId, pageSize, pageNumber);
+        return ResponseEntity.of(Optional.ofNullable(reservationService.findAllByFilter(filter)));
     }
 
     @PostMapping
@@ -40,7 +43,6 @@ public class ReservationController {
         log.info("Called createReservation");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(reservationService.createReservation(reservationToCreate));
-        //return reservationService.createReservation(reservationToCreate);
     }
 
     @PutMapping("/{id}")
